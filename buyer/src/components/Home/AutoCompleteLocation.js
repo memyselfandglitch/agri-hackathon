@@ -1,24 +1,41 @@
-import React from "react";
-import PlacesAutocomplete, {
-  geocodeByAddress,
-  getLatLng
-} from "react-places-autocomplete";
+import React, { useEffect, useState } from "react";
+import PlacesAutocomplete, { geocodeByAddress, getLatLng } from "react-places-autocomplete";
 
 import './AutoCompleteLocation.css';
 
 const AutoCompleteLocation = () => {
-  const [address, setAddress] = React.useState("");
-  const [coordinates, setCoordinates] = React.useState({
-    lat: null,
-    lng: null
-  });
+  const [address, setAddress] = useState("");
+  const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
+  const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false);
 
-  const handleSelect = async value => {
+  useEffect(() => {
+    const loadGoogleMapsScript = () => {
+      if (!document.getElementById('google-maps-script')) {
+        const script = document.createElement("script");
+        script.id = 'google-maps-script';
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAxX_TMXvgWMEuYvMbaeSV69yAIQoEhQn4&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => setGoogleMapsLoaded(true);
+        document.head.appendChild(script);
+      } else {
+        setGoogleMapsLoaded(true);
+      }
+    };
+
+    loadGoogleMapsScript();
+  }, []);
+
+  const handleSelect = async (value) => {
     const results = await geocodeByAddress(value);
     const latLng = await getLatLng(results[0]);
     setAddress(value);
     setCoordinates(latLng);
   };
+
+  if (!googleMapsLoaded) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -43,7 +60,7 @@ const AutoCompleteLocation = () => {
                   : { backgroundColor: 'black', cursor: 'pointer' };
 
                 return (
-                  <div {...getSuggestionItemProps(suggestion, { style })}>
+                  <div {...getSuggestionItemProps(suggestion, { style })} key={suggestion.placeId}>
                     &nbsp;<i className="fas fa-map-marker-alt"></i> &nbsp; {suggestion.description}
                   </div>
                 );
