@@ -1,6 +1,4 @@
 const fs = require('fs');
-
-const uuid = require('uuid/v4');
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 
@@ -15,19 +13,11 @@ const getProductById = async (req, res, next) => {
   try {
     product = await Product.findById(productId);
   } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not find a product.',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Something went wrong, could not find a product.', 500));
   }
 
   if (!product) {
-    const error = new HttpError(
-      'Could not find a product for the provided id.',
-      404
-    );
-    return next(error);
+    return next(new HttpError('Could not find a product for the provided id.', 404));
   }
 
   res.json({ product: product.toObject({ getters: true }) });
@@ -36,38 +26,26 @@ const getProductById = async (req, res, next) => {
 const getProductsByUserId = async (req, res, next) => {
   const userId = req.params.uid;
 
-  // let products;
   let userWithProducts;
   try {
     userWithProducts = await User.findById(userId).populate('products');
   } catch (err) {
-    const error = new HttpError(
-      'Fetching products failed, please try again later',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Fetching products failed, please try again later', 500));
   }
 
   if (!userWithProducts || userWithProducts.products.length === 0) {
-    return next(
-      new HttpError('Could not find products for the provided user id.', 404)
-    );
+    return next(new HttpError('Could not find products for the provided user id.', 404));
   }
-  console.log(userWithProducts);
-  
+
   res.json({
-    products: userWithProducts.products.map(product =>
-      product.toObject({ getters: true })
-    )
+    products: userWithProducts.products.map(product => product.toObject({ getters: true }))
   });
 };
 
 const createProduct = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
-    );
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
   const { title, description, quantity, unit, price, category } = req.body;
@@ -76,13 +54,11 @@ const createProduct = async (req, res, next) => {
   try {
     user = await User.findById(req.userData.userId);
   } catch (err) {
-    const error = new HttpError('Creating product failed, please try again', 500);
-    return next(error);
+    return next(new HttpError('Creating product failed, please try again', 500));
   }
 
   if (!user) {
-    const error = new HttpError('Could not find user for provided id', 404);
-    return next(error);
+    return next(new HttpError('Could not find user for provided id', 404));
   }
 
   const createdProduct = new Product({
@@ -107,11 +83,7 @@ const createProduct = async (req, res, next) => {
     await user.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
-    const error = new HttpError(
-      'Creating product failed, please try again.',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Creating product failed, please try again.', 500));
   }
 
   res.status(201).json({ product: createdProduct });
@@ -120,9 +92,7 @@ const createProduct = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return next(
-      new HttpError('Invalid inputs passed, please check your data.', 422)
-    );
+    return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
   const { title, description, quantity, price } = req.body;
@@ -132,19 +102,11 @@ const updateProduct = async (req, res, next) => {
   try {
     product = await Product.findById(productId);
   } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not update product.',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Something went wrong, could not update product.', 500));
   }
 
   if (product.creator.toString() !== req.userData.userId) {
-    const error = new HttpError(
-      'You are not allowed to edit this product.',
-      401
-    );
-    return next(error);
+    return next(new HttpError('You are not allowed to edit this product.', 401));
   }
 
   product.title = title;
@@ -155,11 +117,7 @@ const updateProduct = async (req, res, next) => {
   try {
     await product.save();
   } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not update product.',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Something went wrong, could not update product.', 500));
   }
 
   res.status(200).json({ product: product.toObject({ getters: true }) });
@@ -172,24 +130,15 @@ const deleteProduct = async (req, res, next) => {
   try {
     product = await Product.findById(productId).populate('creator');
   } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not delete product.',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Something went wrong, could not delete product.', 500));
   }
 
   if (!product) {
-    const error = new HttpError('Could not find product for this id.', 404);
-    return next(error);
+    return next(new HttpError('Could not find product for this id.', 404));
   }
 
   if (product.creator.id !== req.userData.userId) {
-    const error = new HttpError(
-      'You are not allowed to delete this product.',
-      401
-    );
-    return next(error);
+    return next(new HttpError('You are not allowed to delete this product.', 401));
   }
 
   const imagePath = product.image;
@@ -202,18 +151,54 @@ const deleteProduct = async (req, res, next) => {
     await product.creator.save({ session: sess });
     await sess.commitTransaction();
   } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not delete product.',
-      500
-    );
-    return next(error);
+    return next(new HttpError('Something went wrong, could not delete product.', 500));
   }
 
   fs.unlink(imagePath, err => {
-    console.log(err);
+    if (err) {
+      console.log(err);
+    }
   });
 
   res.status(200).json({ message: 'Deleted product.' });
+};
+
+const getFilteredProducts = async (req, res, next) => {
+  console.log(req.query)
+  const { lat, lng, minPrice, maxPrice } = req.query;
+
+  const latitude = parseFloat(lat);
+  const longitude = parseFloat(lng);
+  const min = parseFloat(minPrice) || 0;
+  const max = parseFloat(maxPrice) || Infinity;
+
+  if (isNaN(latitude) || isNaN(longitude)) {
+    return next(new HttpError('Invalid location parameters.', 400));
+  }
+  if (isNaN(min) || isNaN(max)) {
+    return next(new HttpError('Invalid price range parameters.', 400));
+  }
+
+  try {
+    const products = await Product.find({
+      price: { $gte: min, $lte: max },
+      location: {
+        $geoWithin: {
+          $centerSphere: [[longitude, latitude], 10000 / 3963.2] // 5 miles radius
+        }
+      }
+    }).exec();
+
+    if (!products) {
+      return next(new HttpError('No products found matching the criteria.', 404));
+    }
+
+    res.json({
+      products: products.map(product => product.toObject({ getters: true }))
+    });
+  } catch (err) {
+    return next(new HttpError('Fetching products failed, please try again later.', 500));
+  }
 };
 
 exports.getProductById = getProductById;
@@ -221,3 +206,4 @@ exports.getProductsByUserId = getProductsByUserId;
 exports.createProduct = createProduct;
 exports.updateProduct = updateProduct;
 exports.deleteProduct = deleteProduct;
+exports.getFilteredProducts = getFilteredProducts;
