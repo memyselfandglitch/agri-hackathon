@@ -16,7 +16,7 @@ const AllProducts = () => {
         const fetchProducts = async () => {
             try {
                 const responseData = await sendRequest(
-                    'http://localhost:5000/api/buyers/'
+                    'http://localhost:3001/api/buyers/'
                 );
                 setLoadedProducts(responseData.products);
                 setCountProducts(responseData.products.length);
