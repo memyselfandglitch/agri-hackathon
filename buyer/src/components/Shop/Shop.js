@@ -1,38 +1,40 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import './Shop.css';
-
-import FilterModal from '../Filter/FilterModal';
 import FilterSidediv from '../Filter/FilterSidediv';
-// import VersionContext from '../Context/VersionContext';
 import AllProducts from './AllProducts';
-import { ShopContext } from '../Context/shop-context';
 import SearchBar from './SearchBar';
+import { ShopContext } from '../Context/shop-context';
 
 const Shop = () => {
+    const [maxDistance, setMaxDistance] = useState(10000);
+
+    const handleFilterChange = (distance) => {
+        console.log("Handle filter change")
+        setMaxDistance(distance);
+        console.log("Shop", distance)
+    };
+
     const shopContext = useContext(ShopContext);
     const handleInput = (e) => {
+        console.log("handle input")
         shopContext.searched(e.target.value);
     }
+
     return (
         <React.Fragment>
-            {/* <VersionContext /> */}
             <Container className="shopping-content">
-                <div className="filter-modal-div">
-                    <FilterModal />
-                </div>
                 <Row>
                     <Col xl={3} lg={3} md={3} className="filter-sidebar">
-                        <FilterSidediv />
+                        <FilterSidediv onDistanceChange={handleFilterChange} />
                     </Col>
                     <Col>
                         <SearchBar handleInput={handleInput} />
-                        <AllProducts />
+                        <AllProducts maxDistance={maxDistance} />
                     </Col>
                 </Row>
             </Container>
         </React.Fragment>
-    )
+    );
 };
 
 export default Shop;

@@ -1,21 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Accordion from './Accordion';
-import { Button, Form, InputGroup, Range } from 'react-bootstrap';
-import CheckState from './CheckState';
+import { Button, Form, InputGroup } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios'; // Assuming you use axios for HTTP requests
 
 import './Accordion.css';
 
-const FilterAccordion = () => {
+const FilterAccordion = ({ lat, lng, onDistanceChange }) => {
     const [price, setPrice] = useState(9999);
-    const [distance, setDistance] = useState(1000);
+    const [distance, setDistance] = useState(10000);
+    const location = useLocation();
 
+    // Handle price change (no API request here)
     const handlePriceChange = (event) => {
         setPrice(event.target.value);
     };
 
+    // Handle distance change and trigger API request
     const handleDistanceChange = (event) => {
-        setDistance(event.target.value);
+        const newDistance = event.target.value;
+        setDistance(newDistance);
+
+        if (onDistanceChange) {
+            onDistanceChange(newDistance); // Notify parent component
+        }
     };
+
+    // Effect to fetch products based on distance
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const params = new URLSearchParams(location.search);
+                const lat = params.get('lat');
+                const lng = params.get('lng');
+                const response = await axios.get(`http://localhost:3001/api/products?lat=${lat}&lng=${lng}&dist=${distance}`);
+                console.log('Fetched products:', response.data);
+                // You can handle the response here or update local state
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+
+        fetchProducts();
+    }, [distance, lat, lng]); // Depend on distance, lat, and lng
 
     return (
         <div>
@@ -45,8 +72,8 @@ const FilterAccordion = () => {
                         <InputGroup>
                             <Form.Control
                                 type="range"
-                                min="5"
-                                max="1000"
+                                min="0"
+                                max="10000"
                                 value={distance}
                                 onChange={handleDistanceChange}
                             />

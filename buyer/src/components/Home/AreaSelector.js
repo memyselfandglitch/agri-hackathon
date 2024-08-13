@@ -34,6 +34,7 @@ const AreaSelector = () => {
     };
 
     const handleSubmit = () => {
+        console.log("Handle submit")
         if (latitude && longitude) {
             history.push(`/shop?lat=${latitude}&lng=${longitude}`);
         } else {
