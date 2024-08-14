@@ -9,9 +9,18 @@ const ControlledCarousel = () => {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(null);
 
-  const handleSelect = (selectedIndex, e) => {
+  const handleSelect = (selectedIndex, event) => {
+    console.log('Selected Index:', selectedIndex);
+    console.log('Event:', event);
+
     setIndex(selectedIndex);
-    setDirection(e.direction);
+
+    if (event && event.direction) {
+      console.log('Direction:', event.direction);
+      setDirection(event.direction);
+    } else {
+      console.log('Direction is undefined');
+    }
   };
 
   return (

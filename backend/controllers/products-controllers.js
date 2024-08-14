@@ -164,37 +164,58 @@ const deleteProduct = async (req, res, next) => {
 };
 
 const getFilteredProducts = async (req, res, next) => {
-  console.log(req.query)
-  const { lat, lng, minPrice, maxPrice } = req.query;
+  console.log("Getting filtered products");
+  console.log(req.query);
+  const { lat, lng, dist, price } = req.query;
 
   const latitude = parseFloat(lat);
   const longitude = parseFloat(lng);
-  const min = parseFloat(minPrice) || 0;
-  const max = parseFloat(maxPrice) || Infinity;
+  const maxDistance = parseFloat(dist) || 1000; // Default to 1000 km if dist is not provided
+  const maxPrice = parseFloat(price) || 999; // Default to 9999 if price is not provided
+  console.log({ maxDistance, maxPrice });
 
   if (isNaN(latitude) || isNaN(longitude)) {
+    console.log("nan lat or lng");
     return next(new HttpError('Invalid location parameters.', 400));
   }
-  if (isNaN(min) || isNaN(max)) {
-    return next(new HttpError('Invalid price range parameters.', 400));
+  if (isNaN(maxDistance)) {
+    console.log("nan dist");
+    return next(new HttpError('Invalid distance parameter.', 400));
+  }
+  if (isNaN(maxPrice)) {
+    console.log("nan price");
+    return next(new HttpError('Invalid price parameter.', 400));
   }
 
-  try {
-    const products = await Product.find({
-      price: { $gte: min, $lte: max },
-      location: {
-        $geoWithin: {
-          $centerSphere: [[longitude, latitude], 10000 / 3963.2] // 5 miles radius
-        }
-      }
-    }).exec();
+  const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
 
-    if (!products) {
-      return next(new HttpError('No products found matching the criteria.', 404));
-    }
+    const R = 6371; // Radius of the Earth in km
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    console.log("R*c", R * c);
+    return R * c; // Distance in km
+  };
+
+  try {
+    const products = await Product.find().exec();
+
+    const filteredProducts = products.filter(product => {
+      const productLat = product.location.lat;
+      const productLng = product.location.lng;
+      const distance = haversineDistance(latitude, longitude, productLat, productLng);
+      const priceWithinRange = product.price <= maxPrice;
+      console.log({ distance, priceWithinRange });
+      return distance <= maxDistance && priceWithinRange;
+    });
 
     res.json({
-      products: products.map(product => product.toObject({ getters: true }))
+      products: filteredProducts.map(product => product.toObject({ getters: true }))
     });
   } catch (err) {
     return next(new HttpError('Fetching products failed, please try again later.', 500));
