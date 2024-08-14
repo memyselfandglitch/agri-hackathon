@@ -1,76 +1,131 @@
 /* Footer */
 @import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
 section {
-    padding: 60px 0;
+    padding: 0;
 }
 
-section .section-title {
+.container {
+    align-items: center !important;
+    margin: 0px !important;
+}
+
+.section-title {
     text-align: center;
     color: black;
-    margin-bottom: 50px;
+    margin-bottom: 0px;
     text-transform: uppercase;
 }
+
 #footer {
-    background: black !important;
-    margin-top: 40px;
+    position: relative;
+    background: #333;
+    color: #fff;
+    padding: 2vh 12vw;
+    overflow: hidden;
 }
-#footer h5{
-	padding-left: 10px;
-    border-left: 3px solid #eeeeee;
+
+#footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('./kisan.jpg') no-repeat center 30%/cover;
+    opacity: 0.5; 
+    z-index: 0;
+}
+
+#footer h5,
+#footer a,
+.row.text-center,
+#footer ul.social,
+#footer ul.quick-links {
+    position: relative;
+    z-index: 1;
+}
+
+#footer h5 {
+    padding-left: 10px;
     padding-bottom: 6px;
     margin-bottom: 20px;
-    color:#ffffff;
+    color: #ffffff;
+    text-align: center;
 }
+
 #footer a {
     color: #ffffff;
     text-decoration: none !important;
     background-color: transparent;
-    -webkit-text-decoration-skip: objects;
-}
-#footer ul.social li{
-	padding: 3px 0;
-}
-#footer ul.social li a i {
-    margin-right: 5px;
-	font-size:25px;
-	-webkit-transition: .5s all ease;
-	-moz-transition: .5s all ease;
-	transition: .5s all ease;
-}
-#footer ul.social li:hover a i {
-	font-size:30px;
-	margin-top:-10px;
-}
-#footer ul.social li a,
-#footer ul.quick-links li a{
-	color:#ffffff;
-}
-#footer ul.social li a:hover{
-	color:#eeeeee;
-}
-#footer ul.quick-links li{
-	padding: 3px 0;
-	-webkit-transition: .5s all ease;
-	-moz-transition: .5s all ease;
-	transition: .5s all ease;
-}
-#footer ul.quick-links li:hover{
-	padding: 3px 0;
-	margin-left:5px;
-	font-weight:700;
-}
-#footer ul.quick-links li a i{
-	margin-right: 5px;
-}
-#footer ul.quick-links li:hover a i {
-    font-weight: 700;
+    transition: color 0.3s ease, font-size 0.3s ease;
 }
 
-@media (max-width:767px){
-	#footer h5 {
-    padding-left: 0;
-    border-left: transparent;
-    padding-bottom: 0px;
-    margin-bottom: 10px;
+#footer a:hover {
+    color: #ffcc00;
+    font-size: 1.1em;
 }
+
+.row.text-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#footer ul.social {
+    text-align: center;
+    justify-content: center;
+    padding: 0;
+    list-style: none;
+}
+
+#footer ul.social li {
+    display: inline-block;
+    padding: 2px 10px;
+}
+
+#footer ul.social li a i {
+    font-size: 25px;
+    transition: font-size 0.3s ease, color 0.3s ease;
+}
+
+#footer ul.social li a:hover i {
+    font-size: 30px;
+    color: #ffcc00;
+}
+
+#footer ul.quick-links {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    list-style: none;
+}
+
+#footer ul.quick-links li {
+    padding: 0 15px;
+}
+
+#footer ul.quick-links li a {
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+#footer ul.quick-links li a i {
+    margin-right: 5px;
+}
+
+#footer ul.quick-links li a:hover {
+    color: #ffcc00;
+    font-size: 1.1em;
+}
+
+@media (max-width: 767px) {
+    #footer h5 {
+        padding-left: 0;
+        border-left: transparent;
+        padding-bottom: 0px;
+        margin-bottom: 10px;
+    }
 }

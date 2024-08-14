@@ -1,10 +1,44 @@
 .users-list {
-  list-style: none;
-  margin: 0 auto;
+  list-style-type: none;
   padding: 0;
-  width: 90%;
-  max-width: 50rem;
+  margin: 0;
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
+}
+.content{
+ margin:auto;
+ padding: 15vh 20vh;
+}
+
+.users-list li {
+  display: flex;
+}
+
+
+@media (min-width: 576px) {
+  .container {
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+}
+
+@media (min-width: 992px) {
+  .container {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .container {
+    margin-top: 60px;
+    margin-bottom: 60px;
+  }
 }
