@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -9,6 +9,8 @@ import {
 // CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+
+
 // Pages
 import MainNavigation from './shared/components/Navigation/MainNavigation';
 import Users from './user/pages/Users';
@@ -17,6 +19,7 @@ import UserProducts from './products/pages/UserProducts';
 import UpdateProduct from './products/pages/UpdateProduct';
 import Auth from './user/pages/Auth';
 import Footer from './shared/components/Navigation/Footer';
+import ChatBox from './shared/components/Messenger/Messenger';
 import { AuthContext } from './shared/context/auth-context';
 import { useAuth } from './shared/hooks/auth-hook';
 
@@ -36,6 +39,9 @@ const App = () => {
         </Route>
         <Route path="/products/new" exact>
           <NewProduct />
+        </Route>
+        <Route path='/chatbox'>
+          <ChatBox/>
         </Route>
         <Route path="/products/:productId">
           <UpdateProduct />
@@ -60,26 +66,6 @@ const App = () => {
     );
   }
 
-  useEffect(() => {
-    // Load the Dialogflow Messenger stylesheet
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = 'https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/themes/df-messenger-default.css';
-    document.head.appendChild(link);
-
-    // Load the Dialogflow Messenger script
-    const script = document.createElement('script');
-    script.src = 'https://www.gstatic.com/dialogflow-console/fast/df-messenger/prod/v1/df-messenger.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    // Clean up by removing the stylesheet and script when the component is unmounted
-    return () => {
-      document.head.removeChild(link);
-      document.body.removeChild(script);
-    };
-  }, []);
-
   return (
     <AuthContext.Provider
       value={{
@@ -94,31 +80,6 @@ const App = () => {
         <MainNavigation />
         <main>{routes}</main>
         <Footer />
-        <df-messenger
-          project-id="maximal-run-432015-n9"
-          agent-id="7b4ff456-1303-40cb-819d-6beb3da56ba0"
-          language-code="en"
-          max-query-length="-1"
-        >
-          <df-messenger-chat chat-title="Deveshi Singh"></df-messenger-chat>
-        </df-messenger>
-        <style>
-          {`
-            df-messenger {
-              z-index: 999;
-              position: fixed;
-              --df-messenger-font-color: #000;
-              --df-messenger-font-family: Google Sans;
-              --df-messenger-chat-background: #f3f6fc;
-              --df-messenger-message-user-background: #d3e3fd;
-              --df-messenger-message-bot-background: #fff;
-              bottom: 0;
-              right: 0;
-              top: 0;
-              width: 350px;
-            }
-          `}
-        </style>
       </Router>
     </AuthContext.Provider>
   );

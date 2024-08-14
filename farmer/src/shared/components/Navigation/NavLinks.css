@@ -8,8 +8,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: black;
+    font-weight: 600;
   }
+
+  
   
 .nav-links li {
     margin: 1rem;
@@ -25,7 +27,6 @@
 .nav-links a:hover,
 .nav-links a:active,
 .nav-links a.active {
-    background: black;
     color: lawngreen;
 }
 
