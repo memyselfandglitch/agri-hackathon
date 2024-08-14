@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/agri-hackathon/static/css/main.97b6c4b1.chunk.css",
+    "main.js": "/agri-hackathon/static/js/main.912a25e8.chunk.js",
+    "main.js.map": "/agri-hackathon/static/js/main.912a25e8.chunk.js.map",
+    "runtime-main.js": "/agri-hackathon/static/js/runtime-main.f738235c.js",
+    "runtime-main.js.map": "/agri-hackathon/static/js/runtime-main.f738235c.js.map",
+    "static/css/2.17e5ed98.chunk.css": "/agri-hackathon/static/css/2.17e5ed98.chunk.css",
+    "static/js/2.d43dac4a.chunk.js": "/agri-hackathon/static/js/2.d43dac4a.chunk.js",
+    "static/js/2.d43dac4a.chunk.js.map": "/agri-hackathon/static/js/2.d43dac4a.chunk.js.map",
+    "index.html": "/agri-hackathon/index.html",
+    "precache-manifest.3faed176fe9ec30b30b7000eaf0806b3.js": "/agri-hackathon/precache-manifest.3faed176fe9ec30b30b7000eaf0806b3.js",
+    "service-worker.js": "/agri-hackathon/service-worker.js",
+    "static/css/2.17e5ed98.chunk.css.map": "/agri-hackathon/static/css/2.17e5ed98.chunk.css.map",
+    "static/css/main.97b6c4b1.chunk.css.map": "/agri-hackathon/static/css/main.97b6c4b1.chunk.css.map",
+    "static/js/2.d43dac4a.chunk.js.LICENSE": "/agri-hackathon/static/js/2.d43dac4a.chunk.js.LICENSE"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.f738235c.js",
+    "static/css/2.17e5ed98.chunk.css",
+    "static/js/2.d43dac4a.chunk.js",
+    "static/css/main.97b6c4b1.chunk.css",
+    "static/js/main.912a25e8.chunk.js"
+  ]
+}
