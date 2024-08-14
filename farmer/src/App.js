@@ -95,31 +95,30 @@ const App = () => {
         <main>{routes}</main>
         <Footer />
         <df-messenger
-          project-id="maximal-run-432015-n9"
-          agent-id="7b4ff456-1303-40cb-819d-6beb3da56ba0"
+          project-id="agribot-432510"
+          agent-id="c4eeba6d-2a7f-4762-8fab-d6a55e203f8e"
           language-code="en"
           max-query-length="-1"
         >
           <df-messenger-chat-bubble
-            chat-title="Deveshi Singh">
-          </df-messenger-chat-bubble>        </df-messenger>
+            chat-title="AgriSeva">
+          </df-messenger-chat-bubble>
+        </df-messenger>
         <style>
           {`
-    df-messenger {
-      z-index: 999;
-      position: fixed;
-      --df-messenger-font-color: #000;
-      --df-messenger-font-family: Google Sans;
-      --df-messenger-chat-background: #f3f6fc;
-      --df-messenger-message-user-background: #d3e3fd;
-      --df-messenger-message-bot-background: #fff;
-      bottom: 10px; /* Adjust as needed */
-      right: -250px; /* Adjust as needed */
-      width: 350px; /* Adjust as needed */
-    }
-  `}
+            df-messenger {
+              z-index: 999;
+              position: fixed;
+              --df-messenger-font-color: #000;
+              --df-messenger-font-family: Google Sans;
+              --df-messenger-chat-background: #f3f6fc;
+              --df-messenger-message-user-background: #d3e3fd;
+              --df-messenger-message-bot-background: #fff;
+              bottom: 16px;
+              right: 16px;
+            }
+          `}
         </style>
-
       </Router>
     </AuthContext.Provider>
   );
