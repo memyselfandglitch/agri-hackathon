@@ -6,7 +6,7 @@ import LoadingSpinner from '../Utils/LoadingSpinner';
 import ErrorModal from '../Utils/ErrorModal';
 import { ShopContext } from '../Context/shop-context';
 
-const AllProducts = ({ maxDistance }) => {
+const AllProducts = ({ maxDistance, maxPrice }) => {
     const shopContext = useContext(ShopContext);
     const [loadedProducts, setLoadedProducts] = useState([]);
     const [countProducts, setCountProducts] = useState(0);
@@ -29,7 +29,7 @@ const AllProducts = ({ maxDistance }) => {
                 }
 
                 const responseData = await sendRequest(
-                    `http://localhost:3001/api/products?lat=${lat}&lng=${lng}&dist=${maxDistance}`
+                    `http://localhost:3001/api/products?lat=${lat}&lng=${lng}&dist=${maxDistance}&price=${maxPrice}`
                 );
                 console.log({ responseData });
 
@@ -42,7 +42,12 @@ const AllProducts = ({ maxDistance }) => {
         };
 
         fetchProducts();
-    }, [sendRequest, location.search, maxDistance]);
+    }, [sendRequest, location.search, maxDistance, maxPrice]);
+
+    // Filter products based on search term
+    const filteredProducts = loadedProducts.filter(product =>
+        product.title.toLowerCase().includes(shopContext.search.toLowerCase())
+    );
 
     return (
         <React.Fragment>
@@ -55,10 +60,10 @@ const AllProducts = ({ maxDistance }) => {
             {!isLoading && (
                 <React.Fragment>
                     <div>
-                        <h4>Showing {countProducts} results</h4>
+                        <h4>Showing {filteredProducts.length} results</h4>
                     </div>
                     <hr />
-                    <ProductList items={loadedProducts} />
+                    <ProductList items={filteredProducts} />
                 </React.Fragment>
             )}
         </React.Fragment>

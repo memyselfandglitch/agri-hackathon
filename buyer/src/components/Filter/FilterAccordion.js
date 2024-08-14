@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Accordion from './Accordion';
 import { Button, Form, InputGroup } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
 import axios from 'axios'; // Assuming you use axios for HTTP requests
 
 import './Accordion.css';
 
-const FilterAccordion = ({ lat, lng, onDistanceChange }) => {
-    const [price, setPrice] = useState(9999);
+const FilterAccordion = ({ lat, lng, onDistanceChange, onPriceChange }) => {
+    const [price, setPrice] = useState(999);
     const [distance, setDistance] = useState(10000);
-    const location = useLocation();
 
-    // Handle price change (no API request here)
+    // Handle price change and notify parent component
     const handlePriceChange = (event) => {
-        setPrice(event.target.value);
+        const newPrice = event.target.value;
+        setPrice(newPrice);
+
+        if (onPriceChange) {
+            onPriceChange(newPrice); // Notify parent component
+        }
     };
 
-    // Handle distance change and trigger API request
+    // Handle distance change and notify parent component
     const handleDistanceChange = (event) => {
         const newDistance = event.target.value;
         setDistance(newDistance);
@@ -30,12 +33,9 @@ const FilterAccordion = ({ lat, lng, onDistanceChange }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const params = new URLSearchParams(location.search);
-                const lat = params.get('lat');
-                const lng = params.get('lng');
                 const response = await axios.get(`http://localhost:3001/api/products?lat=${lat}&lng=${lng}&dist=${distance}`);
                 console.log('Fetched products:', response.data);
-                // You can handle the response here or update local state
+                // Handle the response here or update local state if needed
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
@@ -57,7 +57,7 @@ const FilterAccordion = ({ lat, lng, onDistanceChange }) => {
                             <Form.Control
                                 type="range"
                                 min="1"
-                                max="9999"
+                                max="999"
                                 value={price}
                                 onChange={handlePriceChange}
                             />

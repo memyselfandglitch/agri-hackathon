@@ -166,20 +166,25 @@ const deleteProduct = async (req, res, next) => {
 const getFilteredProducts = async (req, res, next) => {
   console.log("Getting filtered products");
   console.log(req.query);
-  const { lat, lng, dist } = req.query;
+  const { lat, lng, dist, price } = req.query;
 
   const latitude = parseFloat(lat);
   const longitude = parseFloat(lng);
-  const maxDistance = parseFloat(dist); // Default to 1000 km if dist is not provided
-  console.log({ maxDistance })
+  const maxDistance = parseFloat(dist) || 1000; // Default to 1000 km if dist is not provided
+  const maxPrice = parseFloat(price) || 999; // Default to 9999 if price is not provided
+  console.log({ maxDistance, maxPrice });
 
   if (isNaN(latitude) || isNaN(longitude)) {
-    console.log("nan lat or lng")
+    console.log("nan lat or lng");
     return next(new HttpError('Invalid location parameters.', 400));
   }
   if (isNaN(maxDistance)) {
-    console.log("nan dist")
+    console.log("nan dist");
     return next(new HttpError('Invalid distance parameter.', 400));
+  }
+  if (isNaN(maxPrice)) {
+    console.log("nan price");
+    return next(new HttpError('Invalid price parameter.', 400));
   }
 
   const haversineDistance = (lat1, lon1, lat2, lon2) => {
@@ -193,7 +198,7 @@ const getFilteredProducts = async (req, res, next) => {
       Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
       Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    console.log("R*c", R * c)
+    console.log("R*c", R * c);
     return R * c; // Distance in km
   };
 
@@ -204,8 +209,9 @@ const getFilteredProducts = async (req, res, next) => {
       const productLat = product.location.lat;
       const productLng = product.location.lng;
       const distance = haversineDistance(latitude, longitude, productLat, productLng);
-      console.log({ maxDistance })
-      return distance <= maxDistance;
+      const priceWithinRange = product.price <= maxPrice;
+      console.log({ distance, priceWithinRange });
+      return distance <= maxDistance && priceWithinRange;
     });
 
     res.json({
@@ -215,7 +221,6 @@ const getFilteredProducts = async (req, res, next) => {
     return next(new HttpError('Fetching products failed, please try again later.', 500));
   }
 };
-
 
 exports.getProductById = getProductById;
 exports.getProductsByUserId = getProductsByUserId;
